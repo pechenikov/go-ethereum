@@ -71,9 +71,9 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add data
-          git commit -m "Update folder via GitHub Actions - deployed contract persistant data" || echo "No changes to commit"
-          git push origin master
+          sudo git add data
+          sudo git commit -m "Update folder via GitHub Actions - deployed contract persistant data" || echo "No changes to commit"
+          sudo git push origin master
 
       - name: Push image to Artifact Registry
         run: |
