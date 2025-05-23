@@ -78,3 +78,11 @@ jobs:
       - name: Push image to Artifact Registry
         run: |
           docker push europe-west3-docker.pkg.dev/task-460410/task-repo/app:with-contracts
+
+      - name: Performing test
+        run: |
+          docker compose down
+          docker compose up --build -d
+          ls -lah
+          cd hardhat.tmpl
+          npx hardhat test --network localhost
