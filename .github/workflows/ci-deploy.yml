@@ -56,7 +56,9 @@ jobs:
         run: |
           cd hardhat.tmpl
           node deploy.js
+          cd ..
           echo "gosho" > data/gosho
+          docker logs geth-devnet
 
       - name: Commit container state
         run: |
