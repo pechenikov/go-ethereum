@@ -41,6 +41,7 @@ jobs:
         run: |
           docker compose -f ./docker-compose.yml up -d
           sleep 5 # Give Geth time to initialize
+          sudo rm -fr data/*
 
       - name: Install dependencies
         run: |
@@ -65,6 +66,7 @@ jobs:
           echo "check data folder before shutdown"
           ls -lah data
           docker stop geth-devnet
+          sleep 10
           echo "check data folder after shutdown"
           ls -lah data
           docker commit geth-devnet europe-west3-docker.pkg.dev/task-460410/task-repo/app:with-contracts
