@@ -64,7 +64,7 @@ jobs:
           docker stop geth-devnet
           echo "check data folder after shutdown"
           ls data
-          docker commit geth-devnet europe-west3-docker.pkg.dev/task-460410/task-repo/app:with-contracts
+          docker commit geth-devnet europe-west3-docker.pkg.dev/task-460410/task-repo/app:with-contracts-${{ steps.vars.outputs.TAG }}
 
       - name: Configure Git
         run: |
