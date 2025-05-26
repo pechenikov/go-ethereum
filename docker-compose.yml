@@ -1,13 +1,13 @@
-version: "3.8"
+version: "3.9"
 
 services:
   geth-node:
     image: europe-west3-docker.pkg.dev/task-460410/task-repo/app:latest
     container_name: geth-devnet
     ports:
-      - "8545:8545"   # RPC HTTP
-      - "8546:8546"   # WebSocket
-      - "30303:30303" # P2P
+      - "8545:8545"
+      - "8546:8546"
+      - "30303:30303"
       - "30303:30303/udp"
     volumes:
       - ./data:/root/.ethereum
@@ -26,3 +26,42 @@ services:
       --mine
       --nodiscover
     restart: unless-stopped
+
+  db:
+    image: postgres:13
+    container_name: blockscout-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: blockscout_dev
+    volumes:
+      - blockscout-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    image: blockscout/blockscout:latest
+    container_name: blockscout-backend
+    depends_on:
+      - db
+      - geth-node
+    environment:
+      DATABASE_URL: "ecto://postgres:postgres@db:5432/blockscout_dev"
+      ETHEREUM_JSONRPC_HTTP_URL: "http://geth-node:8545"
+      ETHEREUM_JSONRPC_WS_URL: "ws://geth-node:8546"
+      NETWORK_NAME: "My Geth Devnet"
+      EXPLORER_NAME: "My Custom Explorer"
+    restart: unless-stopped
+
+  proxy:
+    image: nginx:alpine
+    container_name: blockscout-proxy
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  blockscout-postgres-data:
